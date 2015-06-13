@@ -1,12 +1,12 @@
-#NoTrayIcon
-#region ;**** Directives created by AutoIt3Wrapper_GUI ****
+п»ї#NoTrayIcon
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=KotORAudioEncoder.ico
 #AutoIt3Wrapper_Outfile=KotORaudioencoder.exe
-#AutoIt3Wrapper_UseX64=n
-#AutoIt3Wrapper_Res_Comment=Программа для преобразования аудиофайлов игр серии «Star Wars: Knights of the Old Republic»
+#AutoIt3Wrapper_UseUpx=y
+#AutoIt3Wrapper_Res_Comment=РџСЂРѕРіСЂР°РјРјР° РґР»СЏ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ Р°СѓРґРёРѕС„Р°Р№Р»РѕРІ РёРіСЂ СЃРµСЂРёРё В«Star Wars: Knights of the Old RepublicВ»
 #AutoIt3Wrapper_Res_Description=KotOR audio encoder
-#AutoIt3Wrapper_Res_Fileversion=2.0.4
-#AutoIt3Wrapper_Res_LegalCopyright=xrewndel@gmail.com
+#AutoIt3Wrapper_Res_Fileversion=2.0.5
+#AutoIt3Wrapper_Res_LegalCopyright=Loran A. Rendel <loran@xpor.org>
 #AutoIt3Wrapper_Res_SaveSource=y
 #AutoIt3Wrapper_Res_Language=1049
 #AutoIt3Wrapper_Res_Field=CompanyName|XPOR
@@ -14,34 +14,35 @@
 #AutoIt3Wrapper_Res_Field=OriginalFilename|KotORaudioencoder.exe
 #AutoIt3Wrapper_Res_File_Add=KotORaudioencoder.Button.wav, sound, button
 #AutoIt3Wrapper_Res_File_Add=KotORaudioencoder.Message.wav, sound, message
-#endregion ;**** Directives created by AutoIt3Wrapper_GUI ****
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include <File.au3>
 #include <Array.au3>
+#include <Misc.au3>
 #include <GUIConstantsEx.au3>
 #include <WindowsConstants.au3>
 #include "Functions.au3"
 #include "Resources.au3"
 
-; Файлы игр KotOR содержат лишние байты (заголовок) в начале файла, поэтому могут не воспроизводиться плеером.
-; Заголовки аудиофайлов KotOR:
+; Р¤Р°Р№Р»С‹ РёРіСЂ KotOR СЃРѕРґРµСЂР¶Р°С‚ Р»РёС€РЅРёРµ Р±Р°Р№С‚С‹ (Р·Р°РіРѕР»РѕРІРѕРє) РІ РЅР°С‡Р°Р»Рµ С„Р°Р№Р»Р°, РїРѕСЌС‚РѕРјСѓ РјРѕРіСѓС‚ РЅРµ РІРѕСЃРїСЂРѕРёР·РІРѕРґРёС‚СЊСЃСЏ РїР»РµРµСЂРѕРј.
+; Р—Р°РіРѕР»РѕРІРєРё Р°СѓРґРёРѕС„Р°Р№Р»РѕРІ KotOR:
 $HeaderWAV = Binary('0xFFF360C40000000348000000004C414D45332E39335555555555555555555555555555555555555555555555554C414D45332E393355555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555FFF362C48F00000348000000005555555555555555555555555555555555555555555555555555555555555555554C414D45332E393355555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555FFF362C4FF0000034800000000555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555')
 $HeaderMP3 = Binary('0x524946463200000057415645666D7420120000000100010022560000225600000100080000006661637404000000000000006461746100000000')
 $HeaderWAV_Length = 470
 $HeaderMP3_Length = 58
-Global $Title = 'KotOR audio encoder v. 2.0.4 (xrewndel@gmail.com)'
-RunOnce($Title)
-$hGUI = GUICreate($Title, 618, 160)
+Global $Title = 'KotOR audio encoder v. 2.0.5'
+_Singleton($Title)
+$hGUI = GUICreate($Title, 618, 168)
 GUISetFont(12, 400, 0, "Cambria")
-GUICtrlCreateGroup("Выберите папку с файлами для обработки:", 8, 0, 601, 53)
-$hBrowse = GUICtrlCreateButton("Обзор…", 528, 20, 75, 25)
-$hFolder = GUICtrlCreateInput(@ScriptDir, 16, 20, 510, 25)
+GUICtrlCreateGroup("Р’С‹Р±РµСЂРёС‚Рµ РїР°РїРєСѓ СЃ С„Р°Р№Р»Р°РјРё РґР»СЏ РѕР±СЂР°Р±РѕС‚РєРё:", 8, 8, 601, 53)
+$hBrowse = GUICtrlCreateButton("РћР±Р·РѕСЂвЂ¦", 528, 28, 75, 25)
+$hFolder = GUICtrlCreateInput(@ScriptDir, 16, 28, 510, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-GUICtrlCreateGroup("Выберите режим работы:", 8, 54, 601, 97)
-$hInGeneric = GUICtrlCreateRadio("Преобразовать файлы из формата KotOR в стандартные wav/mp3", 16, 78, 508, 17)
-$hInKotOR = GUICtrlCreateRadio("Преобразовать файлы из стандартных wav/mp3 в формат KotOR", 16, 102, 508, 17)
-$hDelete = GUICtrlCreateCheckbox("Удалить оригиналы файлов", 16, 126, 508, 17)
-$hGo = GUICtrlCreateButton("Запуск", 528, 70, 75, 49, 1)
-$hCancel = GUICtrlCreateButton("Отмена", 528, 120, 75, 25)
+GUICtrlCreateGroup("Р’С‹Р±РµСЂРёС‚Рµ СЂРµР¶РёРј СЂР°Р±РѕС‚С‹:", 8, 62, 601, 97)
+$hInGeneric = GUICtrlCreateRadio("РџСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ С„Р°Р№Р»С‹ РёР· С„РѕСЂРјР°С‚Р° KotOR РІ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ wav/mp3", 16, 86, 508, 17)
+$hInKotOR = GUICtrlCreateRadio("РџСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ С„Р°Р№Р»С‹ РёР· СЃС‚Р°РЅРґР°СЂС‚РЅС‹С… wav/mp3 РІ С„РѕСЂРјР°С‚ KotOR", 16, 110, 508, 17)
+$hDelete = GUICtrlCreateCheckbox("РЈРґР°Р»РёС‚СЊ РѕСЂРёРіРёРЅР°Р»С‹ С„Р°Р№Р»РѕРІ", 16, 134, 508, 17)
+$hGo = GUICtrlCreateButton("Р—Р°РїСѓСЃРє", 528, 78, 75, 49, 1)
+$hCancel = GUICtrlCreateButton("РћС‚РјРµРЅР°", 528, 128, 75, 25)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlSetState($hInGeneric, $GUI_CHECKED)
 GUICtrlSetState($hDelete, $GUI_CHECKED)
@@ -54,7 +55,7 @@ While 1
 	Switch $nMsg
 		Case $hBrowse
 			_ResourcePlaySound("button", 1)
-			$Folder = FileSelectFolder('Выберите папку', '', 0, @ScriptDir, $hGUI)
+			$Folder = FileSelectFolder('Р’С‹Р±РµСЂРёС‚Рµ РїР°РїРєСѓ', '', 0, @ScriptDir, $hGUI)
 			$error = @error
 			_ResourcePlaySound("button", 1)
 			If $error Then ContinueLoop
@@ -64,11 +65,11 @@ While 1
 			$Folder = GUICtrlRead($hFolder)
 			If StringStripWS($Folder, 8) = '' Then
 				_ResourcePlaySound("message")
-				MsgBox(0, $Title, 'Папка не выбрана.' & @CRLF & "Укажите папку с файлами для преобразования.", -1, $hGUI)
+				MsgBox(0, $Title, 'РџР°РїРєР° РЅРµ РІС‹Р±СЂР°РЅР°.' & @CRLF & "РЈРєР°Р¶РёС‚Рµ РїР°РїРєСѓ СЃ С„Р°Р№Р»Р°РјРё РґР»СЏ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ.", -1, $hGUI)
 				_ResourcePlaySound("button", 1)
 			ElseIf Not StringInStr(FileGetAttrib($Folder), 'D') Then
 				_ResourcePlaySound("message")
-				MsgBox(0, $Title, '"' & $Folder & '" не существует или не является папкой.' & @CRLF & "Укажите папку с файлами для преобразования.", -1, $hGUI)
+				MsgBox(0, $Title, '"' & $Folder & '" РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚ РёР»Рё РЅРµ СЏРІР»СЏРµС‚СЃСЏ РїР°РїРєРѕР№.' & @CRLF & "РЈРєР°Р¶РёС‚Рµ РїР°РїРєСѓ СЃ С„Р°Р№Р»Р°РјРё РґР»СЏ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ.", -1, $hGUI)
 				_ResourcePlaySound("button", 1)
 			Else
 				FileChangeDir($Folder)
@@ -92,7 +93,7 @@ WEnd
 Func KotOR_Encode($Folder)
 	Local $List, $i, $a, $Success, $Skipped
 	$List = KotOR_GetList($Folder)
-	If $List[0] Then ProgressOn($Title, 'Преобразование файлов', "0 из " & $List[0] & ' обработано.')
+	If $List[0] Then ProgressOn($Title, 'РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ С„Р°Р№Р»РѕРІ', "0 РёР· " & $List[0] & ' РѕР±СЂР°Р±РѕС‚Р°РЅРѕ.')
 	GUIDelete()
 	For $i = 1 To $List[0]
 		FileSetAttrib($List[$i], '-R')
@@ -121,7 +122,7 @@ Func KotOR_Encode($Folder)
 					EndIf
 				EndIf
 		EndSelect
-		ProgressSet(Percent($i, $List[0]), $i & " из " & $List[0] & ' обработано.')
+		ProgressSet(Percent($i, $List[0]), $i & " РёР· " & $List[0] & ' РѕР±СЂР°Р±РѕС‚Р°РЅРѕ.')
 	Next
 	Sleep(500)
 	ProgressOff()
@@ -132,7 +133,7 @@ EndFunc   ;==>KotOR_Encode
 Func KotOR_Decode($Folder)
 	Local $List, $i, $a, $Success, $Skipped
 	$List = KotOR_GetList($Folder)
-	If $List[0] Then ProgressOn($Title, 'Преобразование файлов', "0 из " & $List[0] & ' обработано.')
+	If $List[0] Then ProgressOn($Title, 'РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ С„Р°Р№Р»РѕРІ', "0 РёР· " & $List[0] & ' РѕР±СЂР°Р±РѕС‚Р°РЅРѕ.')
 	GUIDelete()
 	For $i = 1 To $List[0]
 		FileSetAttrib($List[$i], '-R')
@@ -162,7 +163,7 @@ Func KotOR_Decode($Folder)
 					If FileCopy($List[$i], 'InGeneric\skipped', 1) Then $Skipped += 1
 				EndIf
 		EndSelect
-		ProgressSet(Percent($i, $List[0]), $i & " из " & $List[0] & ' обработано.')
+		ProgressSet(Percent($i, $List[0]), $i & " РёР· " & $List[0] & ' РѕР±СЂР°Р±РѕС‚Р°РЅРѕ.')
 	Next
 	Sleep(500)
 	ProgressOff()
@@ -172,12 +173,12 @@ EndFunc   ;==>KotOR_Decode
 
 Func KotOR_Msg($Success, $Skipped, $Total)
 	If $Success Then
-		$String = 'Успешно преобразовано файлов: ' & $Success
+		$String = 'РЈСЃРїРµС€РЅРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРѕ С„Р°Р№Р»РѕРІ: ' & $Success
 	Else
-		$String = 'Нет преобразованных файлов.'
+		$String = 'РќРµС‚ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРЅС‹С… С„Р°Р№Р»РѕРІ.'
 	EndIf
-	If $Skipped Then $String &= @CRLF & 'Не требующих преобразования файлов: ' & $Skipped
-	If $Success + $Skipped < $Total Then $String &= @CRLF & 'Ошибок обработки: ' & $Total - $Success - $Skipped
+	If $Skipped Then $String &= @CRLF & 'РќРµ С‚СЂРµР±СѓСЋС‰РёС… РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ С„Р°Р№Р»РѕРІ: ' & $Skipped
+	If $Success + $Skipped < $Total Then $String &= @CRLF & 'РћС€РёР±РѕРє РѕР±СЂР°Р±РѕС‚РєРё: ' & $Total - $Success - $Skipped
 	_ResourcePlaySound("message", 1)
 	MsgBox(0, $Title, $String)
 	_ResourcePlaySound("button")
